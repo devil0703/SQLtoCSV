@@ -1,0 +1,20 @@
+CREATE TABLE public.esr_inbound_filter (
+	esr_inbound_filter_id uuid NOT NULL, --java code to generate
+    esr_uuid uuid NOT NULL, --get from ESR
+    inbound_event_type varchar(350) NOT NULL, --get from ESR: ExamSchedulingRequestCreatedEvent, EditedRequestClarificationResponseEvent, RescheduleRequestEvent, AppointmentCancelRequestEvent etc
+    esr_status varchar(100) NOT NULL, --status enum are: READY, IN_PROGRESS, ERROR, COMPLETED
+    sent_to_system varchar(100) NOT NULL,--2 enums items: OMS or MULE
+    message TEXT NULL, --stores error messages such as mule error/exception or problem writing to oms directory or any exception messages while processing the esr
+    created_dttm timestamp NULL,--dt of when the app picks up the ESR to process
+    updated_dttm timestamp NULL,--dt of when we update the ESR status
+    CONSTRAINT esr_inbound_filter_pkey PRIMARY KEY (esr_inbound_filter_id)
+);
+ 
+CREATE TABLE public.esr_inbound_filter_config (
+	esr_inbound_filter_config_id uuid NOT NULL,
+    config_type varchar(250) NOT NULL, --we will define an enum for each configuration, first enum would be REGION_OFFICE_CODE
+    config_message_json TEXT NOT NULL, --depending on the enum of the config_type, the column will hold configuration in json format which will allows the app to parse and process the configurations on the fly
+    created_dttm timestamp NULL,
+    updated_dttm timestamp NULL,
+    CONSTRAINT esr_inbound_filter_config_pkey PRIMARY KEY (esr_inbound_filter_config_id)
+);
